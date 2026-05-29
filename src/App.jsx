@@ -508,6 +508,7 @@ const titulo = {
   fontSize: "52px",
   fontWeight: "900",
   margin: 0,
+  color: "#ffffff",
 };
 
 const subtitulo = {
@@ -676,6 +677,7 @@ const loginLogo = {
 const loginTitulo = {
   fontSize: "42px",
   margin: 0,
+  color: "#ffffff",
 };
 
 const loginSubtitulo = {
