@@ -74,79 +74,110 @@ function App() {
   }
 
   function contarOcorrencias() {
-    const linhasIgnoradas = [
-      "SUSPEITO",
-      "SUSPEITO(A)",
-      "INDICIADO",
-      "INDICIADO(A)",
-      "TESTEMUNHA",
-      "AUTOR",
-      "AUTOR(A)",
-      "SÓ COMUNICANTE",
-      "SO COMUNICANTE",
-      "VÍTIMA",
-      "VITIMA",
-    ];
+  const linhas = textoFerramenta
+    .split("\n")
+    .map((linha) => linha.trim())
+    .filter((linha) => linha.length > 0);
 
-    const linhas = textoFerramenta
-      .split("\n")
-      .map((linha) => linha.trim())
-      .filter((linha) => linha.length > 0)
-      .filter((linha) => {
-        const linhaMaiuscula = linha.toUpperCase();
+  const tiposValidos = [
+    "SUSPEITO(A)",
+    "INDICIADO(A)",
+    "AUTOR(A)",
+    "ACUSADO(A)",
+  ];
 
-        if (linhasIgnoradas.includes(linhaMaiuscula)) return false;
-        if (/^\d+\s*\/\s*\d{4}\s*\/\s*\d+/.test(linha)) return false;
-        if (/^\d{2}\/\d{2}\/\d{4}/.test(linha)) return false;
-        if (/\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}/.test(linha)) return false;
-        if (/PORTO ALEGRE|OSORIO|TAVARES|MOSTARDAS|RS-RS/i.test(linha)) return false;
-        if (/RUA|R\.|AV\.|AVENIDA|DINARTE|GARIBALDI|VOLUNTÁRIOS|VOLUNTARIOS/i.test(linha)) return false;
+  let considerarProximaNatureza = false;
 
-        return true;
-      });
+  const contador = {};
 
-    const contador = {};
+  linhas.forEach((linha) => {
+    const linhaMaiuscula = linha.toUpperCase();
 
-    linhas.forEach((linha) => {
-      const nomeOriginal = linha.replace(/\s+/g, " ").trim();
+    if (tiposValidos.includes(linhaMaiuscula)) {
+      considerarProximaNatureza = true;
+      return;
+    }
 
-      let nomePadronizado = nomeOriginal
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toUpperCase();
+    if (
+      linhaMaiuscula === "TESTEMUNHA" ||
+      linhaMaiuscula === "VÍTIMA" ||
+      linhaMaiuscula === "VITIMA" ||
+      linhaMaiuscula === "SÓ COMUNICANTE" ||
+      linhaMaiuscula === "SO COMUNICANTE" ||
+      linhaMaiuscula === "COMUNICANTE"
+    ) {
+      considerarProximaNatureza = false;
+      return;
+    }
 
-      if (nomePadronizado.includes("ENTORPECENTES - TRAFICO")) {
-        nomePadronizado = "Entorpecentes - tráfico";
-      } else if (nomePadronizado.includes("ENTORPECENTES POSSE")) {
-        nomePadronizado = "Entorpecentes posse";
-      } else if (nomePadronizado.includes("APREENSAO DE OBJETO")) {
-        nomePadronizado = "Apreensão de objeto";
-      } else if (nomePadronizado.includes("PERDA DE DOCUMENTO")) {
-        nomePadronizado = "Perda de documento";
-      } else if (nomePadronizado.includes("POSSEPORTE ILEG ARMA RESTRIT")) {
-        nomePadronizado = "Porte ilegal de arma de fogo de uso restrito";
-      } else if (
-        nomePadronizado.includes("LESAO CORPORAL CULPOSA DIRECAO VEIC AUTOMOTOR")
-      ) {
-        nomePadronizado = "Lesão corporal culposa direção de veículo automotor";
-      } else {
-        nomePadronizado = nomeOriginal.toLowerCase();
-        nomePadronizado =
-          nomePadronizado.charAt(0).toUpperCase() + nomePadronizado.slice(1);
-      }
+    const pareceNatureza =
+      linhaMaiuscula.includes("ENTORPECENTES") ||
+      linhaMaiuscula.includes("APREENSAO") ||
+      linhaMaiuscula.includes("LESAO") ||
+      linhaMaiuscula.includes("ROUBO") ||
+      linhaMaiuscula.includes("FURTO") ||
+      linhaMaiuscula.includes("RECEPTACAO") ||
+      linhaMaiuscula.includes("ARMA") ||
+      linhaMaiuscula.includes("HOMICIDIO") ||
+      linhaMaiuscula.includes("AMEACA") ||
+      linhaMaiuscula.includes("DANO") ||
+      linhaMaiuscula.includes("DOCUMENTO");
 
-      contador[nomePadronizado] = (contador[nomePadronizado] || 0) + 1;
-    });
+    if (!pareceNatureza) {
+      return;
+    }
 
-    const resultadoFinal = Object.entries(contador)
-      .sort((a, b) => b[1] - a[1])
-      .map(([nome, quantidade]) =>
-        quantidade > 1 ? `${nome} (${quantidade}x)` : nome
+    if (!considerarProximaNatureza) {
+      return;
+    }
+
+    let nomePadronizado = linhaMaiuscula
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
+    if (nomePadronizado.includes("ENTORPECENTES - TRAFICO")) {
+      nomePadronizado = "Entorpecentes - tráfico";
+    } else if (nomePadronizado.includes("ENTORPECENTES POSSE")) {
+      nomePadronizado = "Entorpecentes posse";
+    } else if (nomePadronizado.includes("APREENSAO DE OBJETO")) {
+      nomePadronizado = "Apreensão de objeto";
+    } else if (nomePadronizado.includes("PERDA DE DOCUMENTO")) {
+      nomePadronizado = "Perda de documento";
+    } else if (
+      nomePadronizado.includes("POSSEPORTE ILEG ARMA RESTRIT")
+    ) {
+      nomePadronizado =
+        "Porte ilegal de arma de fogo de uso restrito";
+    } else if (
+      nomePadronizado.includes(
+        "LESAO CORPORAL CULPOSA DIRECAO VEIC AUTOMOTOR"
       )
-      .join(", ");
+    ) {
+      nomePadronizado =
+        "Lesão corporal culposa direção de veículo automotor";
+    } else {
+      nomePadronizado =
+        linha.charAt(0).toUpperCase() +
+        linha.slice(1).toLowerCase();
+    }
 
-    setResultadoFerramenta(resultadoFinal + ".");
-  }
+    contador[nomePadronizado] =
+      (contador[nomePadronizado] || 0) + 1;
+
+    considerarProximaNatureza = false;
+  });
+
+  const resultadoFinal = Object.entries(contador)
+    .sort((a, b) => b[1] - a[1])
+    .map(([nome, quantidade]) =>
+      quantidade > 1
+        ? `${nome} (${quantidade}x)`
+        : nome
+    )
+    .join(", ");
+
+  setResultadoFerramenta(resultadoFinal + ".");
+}
 
   function gerarDados() {
     const textoLimpo = limparMarcasDagua(cadTexto);
@@ -565,11 +596,12 @@ const resultadoFerramentaCard = {
 const secaoTitulo = {
   marginBottom: "20px",
   fontSize: "24px",
+  color: "#ffffff",
 };
 
 const resultadoTituloMenor = {
   marginBottom: "15px",
-  color: "#e2e8f0",
+  color: "#ffffff",
   fontSize: "20px",
 };
 
