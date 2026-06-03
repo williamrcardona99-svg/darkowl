@@ -269,8 +269,8 @@ ${resultadoFinal}.`
   const partesLocal = local.split("-");
   const enderecoCompleto = partesLocal[0]?.trim() || "";
   const bairro = (partesLocal[1] || "")
-  .replace(".", "")
-  .replace(/^bairro\s+/i, "")
+  .replace(/\./g, "")
+  .replace(/\bbairro\b/gi, "")
   .trim()
   .toUpperCase();
 
