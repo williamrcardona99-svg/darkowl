@@ -644,6 +644,12 @@ Em ${dataHora}, foi gerada a ocorrência nº ${
         >
           📊 Extrator de Release
         </button>
+        <button
+  onClick={() => setAbaAtiva("antecedentes")}
+  style={abaAtiva === "antecedentes" ? botaoAbaAtiva : botaoAba}
+>
+  ⚖️ Calculadora de Antecedentes
+</button>
       </div>
             {abaAtiva === "cad" && (
         <div style={layout}>
@@ -666,51 +672,6 @@ Em ${dataHora}, foi gerada a ocorrência nº ${
               <button onClick={limparTudo} style={botaoLimpar}>
                 Limpar Tudo
               </button>
-            </div>
-
-            <div style={cardFerramentas}>
-              <h2 style={secaoTitulo}>⚖️ Calculadora de Antecedentes</h2>
-
-              <textarea
-                placeholder="Cole os antecedentes criminais, um por linha..."
-                rows="10"
-                value={textoFerramenta}
-                onChange={(e) => setTextoFerramenta(e.target.value)}
-                style={textareaStyle}
-              />
-
-              <div style={grupoBotoes}>
-                <button onClick={contarOcorrencias} style={botaoGerar}>
-                  Calcular Antecedentes
-                </button>
-
-                <button
-                  onClick={() => {
-                    setTextoFerramenta("");
-                    setResultadoFerramenta("");
-                  }}
-                  style={botaoLimpar}
-                >
-                  Limpar
-                </button>
-              </div>
-
-              {resultadoFerramenta && (
-                <div style={resultadoFerramentaCard}>
-                  <div style={resultadoHeader}>
-                    <h3 style={resultadoTituloMenor}>Resultado</h3>
-
-                    <button
-                      onClick={() => copiarTexto(resultadoFerramenta)}
-                      style={botaoCopiar}
-                    >
-                      Copiar
-                    </button>
-                  </div>
-
-                  <p style={resultadoTexto}>{resultadoFerramenta}</p>
-                </div>
-              )}
             </div>
           </div>
 
@@ -836,6 +797,56 @@ Em ${dataHora}, foi gerada a ocorrência nº ${
           </div>
         </div>
       )}
+      {abaAtiva === "antecedentes" && (
+  <div style={layout}>
+    <div style={cardEntrada}>
+      <h2 style={secaoTitulo}>⚖️ Calculadora de Antecedentes</h2>
+
+      <textarea
+        placeholder="Cole os antecedentes criminais..."
+        rows="22"
+        value={textoFerramenta}
+        onChange={(e) => setTextoFerramenta(e.target.value)}
+        style={textareaStyle}
+      />
+
+      <div style={grupoBotoes}>
+        <button onClick={contarOcorrencias} style={botaoGerar}>
+          Calcular Antecedentes
+        </button>
+
+        <button
+          onClick={() => {
+            setTextoFerramenta("");
+            setResultadoFerramenta("");
+          }}
+          style={botaoLimpar}
+        >
+          Limpar
+        </button>
+      </div>
+    </div>
+
+    <div style={colunaResultados}>
+      {resultadoFerramenta && (
+        <div style={resultadoCard}>
+          <div style={resultadoHeader}>
+            <h2 style={secaoTitulo}>Resultado</h2>
+
+            <button
+              onClick={() => copiarTexto(resultadoFerramenta)}
+              style={botaoCopiar}
+            >
+              Copiar
+            </button>
+          </div>
+
+          <p style={resultadoTexto}>{resultadoFerramenta}</p>
+        </div>
+      )}
+    </div>
+  </div>
+)}
             <div style={creditos}>
         DarkOwl MVP v1.3 • Créditos: William Cardona - ARI CPC
       </div>
