@@ -220,6 +220,10 @@ ${resultadoFinal}.`
     if (t.includes("PORTE ILEGAL")) return "PORTE ILEGAL DE ARMA DE FOGO";
     if (t.includes("LEI MARIA DA PENHA")) return "LEI MARIA DA PENHA";
     if (t.includes("LESAO CORPORAL")) return "LESÃO CORPORAL";
+    if (t.includes("CUMPRIMENTO DE MANDADO")) return "CUMPRIMENTO DE MANDADO";
+    if (t.includes("MANDADO")) return "CUMPRIMENTO DE MANDADO";
+    if (t.includes("FORAGIDO")) return "RECAPTURA DE FORAGIDO";
+    if (t.includes("RECAPTURA")) return "RECAPTURA DE FORAGIDO";
 
     return "OUTROS CRIMES";
   }
@@ -280,9 +284,14 @@ ${resultadoFinal}.`
 
   const crime = identificarCrime(titulo);
 
-  const autorLinha =
-  extrairLinha("Preso") ||
-  extrairLinha("Presa") ||
+  const presosLinhas = [
+  ...texto.matchAll(/\*?(Preso|Presa):\*?\s*([^\n]+)/gi),
+].map((match) => limparMarkdown(match[2]));
+
+const presoLinha = presosLinhas[0] || "";
+
+const autorLinha =
+  presoLinha ||
   extrairLinha("Autor") ||
   extrairLinha("Autora");
   const vitimaLinha = extrairLinha("Vítima") || extrairLinha("Vitima");
@@ -310,15 +319,16 @@ ${resultadoFinal}.`
       : "";
 
   function extrairPessoa(linha) {
-    return {
-      nome: linha.split(",")[0]?.trim().toUpperCase() || "",
-      rg: linha.match(/RG\s*([\d]+)/i)?.[1] || "",
-      idade: linha.match(/(\d+)\s*anos/i)?.[1] || "",
-    };
-  }
+  return {
+    nome: linha.split(",")[0]?.trim().toUpperCase() || "",
+    rg: linha.match(/RG:?\s*([0-9.\-]+)/i)?.[1]?.replace(/\D/g, "") || "",
+    idade: linha.match(/(\d+)\s*anos/i)?.[1] || "",
+  };
+}
 
-  const autor = extrairPessoa(autorLinha);
-  const vitima = extrairPessoa(vitimaLinha);
+  const presos = presosLinhas.map((linha) => extrairPessoa(linha));
+const autor = extrairPessoa(autorLinha);
+const vitima = extrairPessoa(vitimaLinha);
 
   const temAutor = autor.nome.length > 0;
 const temPreso = extrairLinha("Preso") || extrairLinha("Presa");
@@ -330,36 +340,32 @@ const temPreso = extrairLinha("Preso") || extrairLinha("Presa");
     ? "SIM"
     : "";
 
-  const linhasExcel = temAutor
-    ? [
-        [
-  dataExcel,
+  const pessoasExcel = presos.length > 0 ? presos : temAutor ? [autor] : [];
 
-  "",
-  "",
-  "",
+const linhasExcel = pessoasExcel.map((pessoa) => {
+  return [
+    dataExcel,
 
-  endereco,
-  numero,
-  bairro,
-  batalhao,
-  crime,
+    "",
+    "",
+    "",
 
-  "",
+    endereco,
+    numero,
+    bairro,
+    batalhao,
+    crime,
 
-  autor.nome,
-  autor.rg,
+    "",
 
-  "",
+    pessoa.nome,
+    pessoa.rg,
 
-  autor.idade,
+    "",
 
-  "",
-
-  moradorRua,
-].join("\t")
-      ]
-    : [];
+    moradorRua,
+  ].join("\t");
+});
 
   let textoRpi = "";
 
