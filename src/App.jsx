@@ -333,20 +333,31 @@ const temPreso = extrairLinha("Preso") || extrairLinha("Presa");
   const linhasExcel = temAutor
     ? [
         [
-          dataExcel,
-          endereco,
-          numero,
-          bairro,
-          batalhao,
-          crime,
-          "",
-          autor.nome,
-          autor.rg,
-          "",
-          autor.idade,
-          "",
-          moradorRua,
-        ].join("\t"),
+  dataExcel,
+
+  "",
+  "",
+  "",
+
+  endereco,
+  numero,
+  bairro,
+  batalhao,
+  crime,
+
+  "",
+
+  autor.nome,
+  autor.rg,
+
+  "",
+
+  autor.idade,
+
+  "",
+
+  moradorRua,
+].join("\t")
       ]
     : [];
 
