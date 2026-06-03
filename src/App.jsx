@@ -836,6 +836,9 @@ Em ${dataHora}, foi gerada a ocorrência nº ${
           </div>
         </div>
       )}
+            <div style={creditos}>
+        DarkOwl MVP v1.3 • Créditos: William Cardona - ARI CPC
+      </div>
     </div>
   );
 }
@@ -1107,4 +1110,12 @@ const loginBotao = {
   fontWeight: "bold",
 };
 
+const creditos = {
+  textAlign: "center",
+  marginTop: "40px",
+  padding: "15px",
+  color: "#64748b",
+  fontSize: "13px",
+  borderTop: "1px solid #1e293b",
+};
 export default App;
