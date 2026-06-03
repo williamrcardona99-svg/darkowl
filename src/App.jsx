@@ -268,7 +268,11 @@ ${resultadoFinal}.`
 
   const partesLocal = local.split("-");
   const enderecoCompleto = partesLocal[0]?.trim() || "";
-  const bairro = partesLocal[1]?.replace(".", "").trim() || "";
+  const bairro = (partesLocal[1] || "")
+  .replace(".", "")
+  .replace(/^bairro\s+/i, "")
+  .trim()
+  .toUpperCase();
 
   const numeroMatch = enderecoCompleto.match(/(?:nº|n°|,)\s*(\d+)/i);
   const numero = numeroMatch ? numeroMatch[1] : "";
