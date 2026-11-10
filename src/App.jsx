@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import CalculadoraAntecedentesV2 from "./ferramentas/hortensias/CalculadoraAntecedentesV2";
 function App() {
   const [logado, setLogado] = useState(
     localStorage.getItem("darkowl_logado") === "true"
@@ -8,7 +8,8 @@ function App() {
   const [senha, setSenha] = useState("");
 
   const [abaAtiva, setAbaAtiva] = useState("cad");
-
+const [ambienteAtivo, setAmbienteAtivo] = useState("cpc");
+const [ferramentaHortensias, setFerramentaHortensias] = useState("");
   const [cadTexto, setCadTexto] = useState("");
   const [resultado, setResultado] = useState(null);
 
@@ -630,28 +631,47 @@ Em ${dataHora}, foi gerada a ocorrência nº ${
         </div>
       </div>
 
-      <div style={menuAbas}>
-        <button
-          onClick={() => setAbaAtiva("cad")}
-          style={abaAtiva === "cad" ? botaoAbaAtiva : botaoAba}
-        >
-          📋 CAD
-        </button>
+     <div style={menuAbas}>
+  <button
+    onClick={() => setAmbienteAtivo("cpc")}
+    style={ambienteAtivo === "cpc" ? botaoAbaAtiva : botaoAba}
+  >
+    🛡️ CPC
+  </button>
 
-        <button
-          onClick={() => setAbaAtiva("release")}
-          style={abaAtiva === "release" ? botaoAbaAtiva : botaoAba}
-        >
-          📊 Extrator de Release
-        </button>
-        <button
-  onClick={() => setAbaAtiva("antecedentes")}
-  style={abaAtiva === "antecedentes" ? botaoAbaAtiva : botaoAba}
->
-  ⚖️ Calculadora de Antecedentes
-</button>
-      </div>
-            {abaAtiva === "cad" && (
+  <button
+    onClick={() => setAmbienteAtivo("hortensias")}
+    style={ambienteAtivo === "hortensias" ? botaoAbaAtiva : botaoAba}
+  >
+    🦉 HORTÊNSIAS
+  </button>
+</div>
+
+{ambienteAtivo === "cpc" && (
+  <div style={menuAbas}>
+    <button
+      onClick={() => setAbaAtiva("cad")}
+      style={abaAtiva === "cad" ? botaoAbaAtiva : botaoAba}
+    >
+      📋 CAD
+    </button>
+
+    <button
+      onClick={() => setAbaAtiva("release")}
+      style={abaAtiva === "release" ? botaoAbaAtiva : botaoAba}
+    >
+      📊 Extrator de Release
+    </button>
+
+    <button
+      onClick={() => setAbaAtiva("antecedentes")}
+      style={abaAtiva === "antecedentes" ? botaoAbaAtiva : botaoAba}
+    >
+      ⚖️ Antecedentes
+    </button>
+  </div>
+)}
+            {ambienteAtivo === "cpc" && abaAtiva === "cad" && (
         <div style={layout}>
           <div style={cardEntrada}>
             <h2 style={secaoTitulo}>📋 Colar Texto do CAD</h2>
@@ -847,6 +867,32 @@ Em ${dataHora}, foi gerada a ocorrência nº ${
     </div>
   </div>
 )}
+
+
+
+{ambienteAtivo === "hortensias" && (
+  <>
+    <div style={menuAbas}>
+      <button
+        onClick={() => setFerramentaHortensias("antecedentesV2")}
+        style={
+          ferramentaHortensias === "antecedentesV2"
+            ? botaoAbaAtiva
+            : botaoAba
+        }
+      >
+        ⚖️ Calculadora de Antecedentes V2
+      </button>
+    </div>
+
+    {ferramentaHortensias === "antecedentesV2" && (
+      <div style={layout}>
+        <CalculadoraAntecedentesV2 />
+      </div>
+    )}
+  </>
+)}
+
             <div style={creditos}>
         DarkOwl MVP v1.3 • Créditos: William Cardona - ARI CPC
       </div>
