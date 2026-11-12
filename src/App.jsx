@@ -1,5 +1,6 @@
 import { useState } from "react";
 import CalculadoraAntecedentesV2 from "./ferramentas/hortensias/CalculadoraAntecedentesV2";
+import Cartorial from "./ferramentas/hortensias/Cartorial";
 function App() {
   const [logado, setLogado] = useState(
     localStorage.getItem("darkowl_logado") === "true"
@@ -748,7 +749,7 @@ Em ${dataHora}, foi gerada a ocorrência nº ${
         </div>
       )}
 
-      {abaAtiva === "release" && (
+      {ambienteAtivo === "cpc" && abaAtiva === "release" && (
         <div style={layout}>
           <div style={cardEntrada}>
             <h2 style={secaoTitulo}>📊 Extrator de Release</h2>
@@ -817,7 +818,7 @@ Em ${dataHora}, foi gerada a ocorrência nº ${
           </div>
         </div>
       )}
-      {abaAtiva === "antecedentes" && (
+      {ambienteAtivo === "cpc" && abaAtiva === "antecedentes" && (
   <div style={layout}>
     <div style={cardEntrada}>
       <h2 style={secaoTitulo}>⚖️ Calculadora de Antecedentes</h2>
@@ -883,19 +884,62 @@ Em ${dataHora}, foi gerada a ocorrência nº ${
       >
         ⚖️ Calculadora de Antecedentes V2
       </button>
+
+      <button
+        onClick={() => setFerramentaHortensias("cartorial")}
+        style={
+          ferramentaHortensias === "cartorial"
+            ? botaoAbaAtiva
+            : botaoAba
+        }
+      >
+        📄 Cartorial
+      </button>
     </div>
 
-    {ferramentaHortensias === "antecedentesV2" && (
-      <div style={layout}>
-        <CalculadoraAntecedentesV2 />
-      </div>
-    )}
+   
+
+    <div
+      style={{
+        ...layout,
+        display:
+          ferramentaHortensias === "cartorial"
+            ? "block"
+            : "none",
+      }}
+    >
+      <Cartorial />
+    </div>
   </>
 )}
 
-            <div style={creditos}>
-        DarkOwl MVP v1.3 • Créditos: William Cardona - ARI CPC
-      </div>
+<div style={creditos}>
+  DarkOwl MVP v1.3 • Créditos: William Cardona
+</div>
+
+  <div
+  style={{
+    ...layout,
+    display:
+      ferramentaHortensias === "antecedentesV2"
+        ? "block"
+        : "none",
+  }}
+>
+  <CalculadoraAntecedentesV2 />
+</div>
+
+<div
+  style={{
+    ...layout,
+    display:
+      ferramentaHortensias === "cartorial"
+        ? "block"
+        : "none",
+  }}
+>
+</div>
+
     </div>
   );
 }
